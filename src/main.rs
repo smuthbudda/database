@@ -27,8 +27,6 @@ fn main() {
 }
 
 fn db_stuff(storage: &mut StorageEngine) {
-
-
     // Create a table with columns if it doesn't exist
     if !storage.tables.contains_key("users") {
         storage.create_table("users", vec!["id".to_string(), "name".to_string(), "age".to_string()]);
@@ -52,8 +50,6 @@ fn db_stuff(storage: &mut StorageEngine) {
         row3.insert("age".to_string(), "35".to_string());
         storage.insert_row("users", crate::db::schema::Row { data: row3 });
     }
-
-    // Demonstrate B-tree functionality
     println!("\n=== B-tree Index Information ===");
     if let Some(table) = storage.tables.get("users") {
         for (column, index) in &table.indexes {
@@ -64,12 +60,10 @@ fn db_stuff(storage: &mut StorageEngine) {
         }
     }
 
-    // Demonstrate index-based search
     println!("\n=== Index-based Search ===");
     let results = storage.search_by_index("users", SQLOperator::EQUALS, "age", 30);
     println!("Users with age 30: {:?}", results);
 
-    // Demonstrate query execution
     println!("\n=== Query Execution ===");
     let executor = ExecutionEngine::new(storage.clone());
     let query_plan = QueryPlan {
@@ -86,8 +80,6 @@ fn db_stuff(storage: &mut StorageEngine) {
         }
         Err(e) => println!("Error: {:?}", e),
     }
-
-    // Save database to file (this includes all B-trees)
     match executor.storage_engine.save_to_file("jordan_db.db") {
         Ok(_) => println!("\nDatabase saved to 'jordan_db.db'"),
         Err(e) => println!("Error saving database: {:?}", e),
